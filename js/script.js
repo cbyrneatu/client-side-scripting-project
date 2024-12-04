@@ -37,14 +37,14 @@ async function performSearch(event) {
 	// Disabling the button stops the user from submitting while data is already
 	// being fetched from the API.
 	submitButton.disabled = true;
+	root.innerHTML = "";
 
 	try {
 		const result = await imdbSearch(text);
 		displaySearchResults(result);
 	} catch (e) {
 		console.error("IMDB search failed", e);
-
-		// TODO display an error message to the user.
+		displayErrorMessage("Failed to fetch data from IMDB API");
 	} finally {
 		// Once either the code in the try block is done or an exception is caught
 		// re-enable the button.
@@ -73,6 +73,17 @@ function displaySearchResult(item) {
 
 	container.appendChild(title);
 	root.appendChild(container);
+}
+
+/**
+ * Adds an error message to the root element of the page.
+ */
+function displayErrorMessage(text) {
+	const message = document.createElement("p");
+	message.className = "error-message";
+	message.textContent = text;
+
+	root.appendChild(message);
 }
 
 /**
