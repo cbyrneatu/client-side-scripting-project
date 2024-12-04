@@ -1,5 +1,14 @@
+const fetchOptions = {
+	method: "GET",
+	headers: {
+		"x-rapidapi-key": "32796c810dmsh49cb2662fd889b2p166ff5jsnc5b8804816fd",
+		"x-rapidapi-host": "imdb-com.p.rapidapi.com",
+	},
+};
+
 const root = document.getElementById("root");
 const form = document.getElementById("search-form");
+const submitButton = document.getElementById("search-submit");
 
 form.onsubmit = performSearch;
 
@@ -25,5 +34,59 @@ async function performSearch(event) {
 		return;
 	}
 
-	console.log(`Searching for ${text}!`);
+	// Disabling the button stops the user from submitting while data is already
+	// being fetched from the API.
+	submitButton.disabled = true;
+
+	try {
+		const result = await imdbSearch(text);
+		displaySearchResults(result);
+	} catch (e) {
+		console.error("IMDB search failed", e);
+
+		// TODO display an error message to the user.
+	} finally {
+		// Once either the code in the try block is done or an exception is caught
+		// re-enable the button.
+		submitButton.disabled = false;
+	}
+}
+
+/**
+ * Takes search results from IMDB and displays them to the user.
+ */
+function displaySearchResults(result) {
+	const items = result.data.mainSearch.edges;
+	items.forEach((item) => {
+		displaySearchResult(item.node.entity);
+	});
+}
+
+/**
+ * Displays a single search result from IMDB.
+ */
+function displaySearchResult(item) {
+	const container = document.createElement("div");
+
+	const title = document.createElement("h5");
+	title.textContent = item.titleText.text;
+
+	container.appendChild(title);
+	root.appendChild(container);
+}
+
+/**
+ * Returns search results for a certain value from the IMDB API.
+ */
+async function imdbSearch(searchTerm) {
+	const response = await fetch(
+		`https://imdb-com.p.rapidapi.com/search?searchTerm=${searchTerm}`,
+		fetchOptions,
+	);
+
+	if (!response.ok) {
+		throw new Error("Failed to fetch data from the IMDB API!");
+	}
+
+	return await response.json();
 }
