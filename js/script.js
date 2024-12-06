@@ -47,13 +47,14 @@ async function performSearch(event) {
 
 	try {
 		const result = await imdbSearch(text, limit);
-		displaySearchResults(result);
+		displaySearchResults(result, () => {
+			// I only want the search button to re-enable when all of the items
+			// have been rendered.
+			submitButton.disabled = false;
+		});
 	} catch (e) {
 		console.error("IMDB search failed", e);
 		displayErrorMessage("Failed to fetch data from IMDB API");
-	} finally {
-		// Once either the code in the try block is done or an exception is caught
-		// re-enable the button.
 		submitButton.disabled = false;
 	}
 }
@@ -61,18 +62,37 @@ async function performSearch(event) {
 /**
  * Takes search results from IMDB and displays them to the user.
  */
-function displaySearchResults(result) {
+function displaySearchResults(result, finishedCallback) {
 	const items = result.data.mainSearch.edges;
-	items.forEach((item) => {
-		displaySearchResult(item.node.entity);
+
+	items.forEach((item, index) => {
+		// If I attempt to fetch information about the items too fast,
+		// the API will reject the requests.
+		// To solve this, I use the `setTimeout` function to stagger the rendering
+		// of each search result.
+		setTimeout(async () => {
+			try {
+				await displaySearchResult(item.node.entity);
+			} catch (e) {
+				console.error("IMDB search failed", e);
+				displayErrorMessage("Failed to render IMDB search result!");
+			}
+
+			// If this is the last item in the list to finish being rendered, we can
+			// call the finished callback.
+			if (index === items.length - 1) {
+				finishedCallback();
+			}
+		}, index * 300); // 300ms between each item
 	});
 }
 
 /**
  * Displays a single search result from IMDB.
  */
-function displaySearchResult(item) {
-	console.log(item);
+async function displaySearchResult(item) {
+	const overview = await imdbGetOverview(item.id);
+
 	const container = document.createElement("div");
 	container.className = "result-card";
 
@@ -101,6 +121,17 @@ function displaySearchResult(item) {
 	itemType.textContent = item.titleType.text;
 	itemType.className = "result-type";
 	detailsContainer.appendChild(itemType);
+
+	const description = document.createElement("p");
+	description.style.marginTop = "0.5em";
+
+	if (overview.data.title.plot) {
+		description.textContent = overview.data.title.plot.plotText.plainText;
+	} else {
+		description.textContent = "No description available.";
+	}
+
+	detailsContainer.appendChild(description);
 
 	if (item.principalCredits[0]) {
 		const creditsContainer = document.createElement("div");
@@ -135,6 +166,22 @@ function displayErrorMessage(text) {
 	message.textContent = text;
 
 	root.appendChild(message);
+}
+
+/**
+ * Returns extra information about an item on IMDB.
+ */
+async function imdbGetOverview(titleId) {
+	const response = await fetch(
+		`https://imdb-com.p.rapidapi.com/title/get-overview?tconst=${titleId}`,
+		fetchOptions,
+	);
+
+	if (!response.ok) {
+		throw new Error("Failed to fetch data from the IMDB API!", response);
+	}
+
+	return await response.json();
 }
 
 /**
