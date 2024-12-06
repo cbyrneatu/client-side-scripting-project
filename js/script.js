@@ -89,6 +89,26 @@ function displaySearchResult(item) {
 		detailsContainer.appendChild(releaseDate);
 	}
 
+	if (item.principalCredits[0]) {
+		const creditsContainer = document.createElement("div");
+		creditsContainer.className = "credits-container";
+
+		item.principalCredits[0].credits.forEach((actor) => {
+			if (!actor.name.primaryImage) {
+				return;
+			}
+
+			const element = document.createElement("img");
+			element.src = actor.name.primaryImage.url;
+			element.className = "actor-image";
+			element.alt = `Picture of ${actor.name.nameText.text}`;
+
+			creditsContainer.appendChild(element);
+		});
+
+		detailsContainer.appendChild(creditsContainer);
+	}
+
 	container.appendChild(detailsContainer);
 	root.appendChild(container);
 }
