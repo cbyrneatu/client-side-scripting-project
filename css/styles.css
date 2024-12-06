@@ -59,15 +59,31 @@ h6 {
 	flex-direction: column;
 }
 
+.statistics-container {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5em;
+}
+
 .result-type {
 	font-weight: 600;
 	font-size: small;
 
-	width: fit-content;
 	padding: 0.5em 0.75em;
 	border-radius: 0.5em;
 
 	background-color: slateblue;
+	color: white;
+}
+
+.rating {
+	font-weight: 600;
+	font-size: small;
+
+	padding: 0.5em 0.75em;
+	border-radius: 0.5em;
+
+	background-color: salmon;
 	color: white;
 }
 

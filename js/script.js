@@ -93,9 +93,11 @@ function displaySearchResults(result, finishedCallback) {
 async function displaySearchResult(item) {
 	const overview = await imdbGetOverview(item.id);
 
+	// Create an overall container for the result.
 	const container = document.createElement("div");
 	container.className = "result-card";
 
+	// If there is an image, add that first.
 	if (item.primaryImage) {
 		const image = document.createElement("img");
 		image.src = item.primaryImage.url;
@@ -104,24 +106,41 @@ async function displaySearchResult(item) {
 		container.appendChild(image);
 	}
 
+	// Create another container for the details on the right-hand side
 	const detailsContainer = document.createElement("div");
 	detailsContainer.className = "details-container";
 
+	// Add the item's title in a h3 element
 	const title = document.createElement("h3");
 	title.textContent = item.titleText.text;
 	detailsContainer.appendChild(title);
 
+	// If the item has a release date set, add it in a h4 element
 	if (item.releaseDate) {
 		const releaseDate = document.createElement("h4");
 		releaseDate.textContent = `Released on ${item.releaseDate.day}/${item.releaseDate.month}/${item.releaseDate.year}`;
 		detailsContainer.appendChild(releaseDate);
 	}
 
+	// Add a row container for the statistics
+	const statisticsContainer = document.createElement("div");
+	statisticsContainer.className = "statistics-container";
+
+	// Add the item type within a span (movie, tv show, etc.)
 	const itemType = document.createElement("span");
 	itemType.textContent = item.titleType.text;
 	itemType.className = "result-type";
-	detailsContainer.appendChild(itemType);
+	statisticsContainer.appendChild(itemType);
 
+	// Add the rating within a span that the IMDB users gave it
+	const rating = document.createElement("span");
+	rating.textContent = overview.data.title.ratingsSummary.aggregateRating;
+	rating.className = "rating";
+	statisticsContainer.appendChild(rating);
+
+	detailsContainer.appendChild(statisticsContainer);
+
+	// Add a description element (if it exists)
 	const description = document.createElement("p");
 	description.style.marginTop = "0.5em";
 
@@ -133,10 +152,13 @@ async function displaySearchResult(item) {
 
 	detailsContainer.appendChild(description);
 
+	// If the result has credits set
 	if (item.principalCredits[0]) {
+		// Create a container for the credits to be in
 		const creditsContainer = document.createElement("div");
 		creditsContainer.className = "credits-container";
 
+		// For each person credited, create an image element for their picture
 		item.principalCredits[0].credits.forEach((actor) => {
 			if (!actor.name.primaryImage) {
 				return;
