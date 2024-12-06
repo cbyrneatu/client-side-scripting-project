@@ -8,6 +8,7 @@ const fetchOptions = {
 
 const root = document.getElementById("root");
 const form = document.getElementById("search-form");
+const limitElement = document.getElementById("search-limit");
 const submitButton = document.getElementById("search-submit");
 
 form.onsubmit = performSearch;
@@ -34,13 +35,18 @@ async function performSearch(event) {
 		return;
 	}
 
+	let limit = limitElement.value;
+	if (limit === "" || isNaN(limit)) {
+		limit = 20;
+	}
+
 	// Disabling the button stops the user from submitting while data is already
 	// being fetched from the API.
 	submitButton.disabled = true;
 	root.innerHTML = "";
 
 	try {
-		const result = await imdbSearch(text);
+		const result = await imdbSearch(text, limit);
 		displaySearchResults(result);
 	} catch (e) {
 		console.error("IMDB search failed", e);
@@ -127,9 +133,9 @@ function displayErrorMessage(text) {
 /**
  * Returns search results for a certain value from the IMDB API.
  */
-async function imdbSearch(searchTerm) {
+async function imdbSearch(searchTerm, limit) {
 	const response = await fetch(
-		`https://imdb-com.p.rapidapi.com/search?searchTerm=${searchTerm}`,
+		`https://imdb-com.p.rapidapi.com/search?searchTerm=${searchTerm}&limit=${limit}&type=MOVIE,TV`,
 		fetchOptions,
 	);
 

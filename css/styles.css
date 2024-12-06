@@ -61,6 +61,10 @@ h6 {
 	object-fit: cover;
 }
 
+.input-group {
+	margin: 1em 0;
+}
+
 @media screen and (max-width: 1024px) {
 	#root {
 		grid-template-columns: 1fr;

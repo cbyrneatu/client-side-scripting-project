@@ -12,7 +12,12 @@
 <body>
     <h2>Search for any movie / TV show</h2>
     <form id="search-form">
-        <input id="search-text" type="text">
+        <div class="input-group">
+            <label for="search-limit">Results Limit:</label>
+            <input id="search-limit" type="number" value="20" placeholder="e.g: 20">
+        </div>
+
+        <input id="search-text" type="text" placeholder="Enter a movie or TV show...">
         <button id="search-submit" type="submit">Search</button>
     </form>
 
