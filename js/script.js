@@ -69,10 +69,6 @@ function displaySearchResult(item) {
 	const container = document.createElement("div");
 	container.className = "result-card";
 
-	const title = document.createElement("h5");
-	title.textContent = item.titleText.text;
-
-
 	if (item.primaryImage) {
 		const image = document.createElement("img");
 		image.src = item.primaryImage.url;
@@ -81,7 +77,19 @@ function displaySearchResult(item) {
 		container.appendChild(image);
 	}
 
-	container.appendChild(title);
+	const detailsContainer = document.createElement("div");
+
+	const title = document.createElement("h3");
+	title.textContent = item.titleText.text;
+	detailsContainer.appendChild(title);
+
+	if (item.releaseDate) {
+		const releaseDate = document.createElement("h4");
+		releaseDate.textContent = `Released on ${item.releaseDate.day}/${item.releaseDate.month}/${item.releaseDate.year}`;
+		detailsContainer.appendChild(releaseDate);
+	}
+
+	container.appendChild(detailsContainer);
 	root.appendChild(container);
 }
 
