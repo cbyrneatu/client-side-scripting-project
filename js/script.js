@@ -72,6 +72,7 @@ function displaySearchResults(result) {
  * Displays a single search result from IMDB.
  */
 function displaySearchResult(item) {
+	console.log(item);
 	const container = document.createElement("div");
 	container.className = "result-card";
 
@@ -84,6 +85,7 @@ function displaySearchResult(item) {
 	}
 
 	const detailsContainer = document.createElement("div");
+	detailsContainer.className = "details-container";
 
 	const title = document.createElement("h3");
 	title.textContent = item.titleText.text;
@@ -94,6 +96,11 @@ function displaySearchResult(item) {
 		releaseDate.textContent = `Released on ${item.releaseDate.day}/${item.releaseDate.month}/${item.releaseDate.year}`;
 		detailsContainer.appendChild(releaseDate);
 	}
+
+	const itemType = document.createElement("span");
+	itemType.textContent = item.titleType.text;
+	itemType.className = "result-type";
+	detailsContainer.appendChild(itemType);
 
 	if (item.principalCredits[0]) {
 		const creditsContainer = document.createElement("div");
