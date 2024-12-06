@@ -20,6 +20,29 @@ h6 {
 	line-height: 1.1;
 }
 
+#root {
+	margin-top: 1em;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1em;
+}
+
 .error-message {
 	color: indianred;
+}
+
+.result-card {
+	padding: 0.75em;
+	background-color: whitesmoke;
+	border-radius: 0.5em;
+}
+
+.result-card > img {
+	border-radius: 0.25em;
+}
+
+@media screen and (max-width: 1024px) {
+	#root {
+		grid-template-columns: 1fr;
+	}
 }

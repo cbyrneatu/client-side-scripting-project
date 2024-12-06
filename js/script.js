@@ -67,9 +67,19 @@ function displaySearchResults(result) {
  */
 function displaySearchResult(item) {
 	const container = document.createElement("div");
+	container.className = "result-card";
 
 	const title = document.createElement("h5");
 	title.textContent = item.titleText.text;
+
+
+	if (item.primaryImage) {
+		const image = document.createElement("img");
+		image.src = item.primaryImage.url;
+		image.style.height = "300px";
+
+		container.appendChild(image);
+	}
 
 	container.appendChild(title);
 	root.appendChild(container);
