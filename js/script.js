@@ -8,6 +8,7 @@ const fetchOptions = {
 
 const root = document.getElementById("root");
 const form = document.getElementById("search-form");
+const typeElement = document.getElementById("search-type");
 const limitElement = document.getElementById("search-limit");
 const submitButton = document.getElementById("search-submit");
 
@@ -46,7 +47,7 @@ async function performSearch(event) {
 	root.innerHTML = "";
 
 	try {
-		const result = await imdbSearch(text, limit);
+		const result = await imdbSearch(text, limit, typeElement.value);
 		displaySearchResults(result, () => {
 			// I only want the search button to re-enable when all of the items
 			// have been rendered.
@@ -209,9 +210,9 @@ async function imdbGetOverview(titleId) {
 /**
  * Returns search results for a certain value from the IMDB API.
  */
-async function imdbSearch(searchTerm, limit) {
+async function imdbSearch(searchTerm, limit, type) {
 	const response = await fetch(
-		`https://imdb-com.p.rapidapi.com/search?searchTerm=${searchTerm}&limit=${limit}&type=MOVIE,TV`,
+		`https://imdb-com.p.rapidapi.com/search?searchTerm=${searchTerm}&limit=${limit}&type=${type}`,
 		fetchOptions,
 	);
 
